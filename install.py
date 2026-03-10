@@ -2,7 +2,8 @@
 """
 Install code-puppy-superpowers into your Code Puppy environment.
 
-Copies agents, commands, skills, and plugin into the correct locations.
+Copies agents, commands, skills, and plugin into ~/.code_puppy/.
+Creates a symlink from ~/.code-puppy/commands → ~/.code_puppy/commands.
 Run from the repo root: python install.py
 """
 
@@ -17,13 +18,15 @@ from pathlib import Path
 
 HOME = Path.home()
 CODE_PUPPY_DIR = HOME / ".code_puppy"
-AGENTS_DIR = CODE_PUPPY_DIR / "agents"
-PLUGINS_DIR = CODE_PUPPY_DIR / "plugins" / "superpowers"
-SKILLS_DIR = CODE_PUPPY_DIR / "superpowers" / "skills"
+CODE_PUPPY_HYPHEN_DIR = HOME / ".code-puppy"  # alternate naming convention
 
-# Commands go into the project-local .claude/commands/ directory.
-# If no project directory is specified, we use cwd.
-PROJECT_COMMANDS_DIR = Path.cwd() / ".claude" / "commands"
+AGENTS_DIR = CODE_PUPPY_DIR / "agents"
+COMMANDS_DIR = CODE_PUPPY_DIR / "commands"
+PLUGINS_DIR = CODE_PUPPY_DIR / "plugins" / "superpowers"
+SKILLS_DIR = CODE_PUPPY_DIR / "skills"
+
+# Symlink target: ~/.code-puppy/commands → ~/.code_puppy/commands
+COMMANDS_SYMLINK = CODE_PUPPY_HYPHEN_DIR / "commands"
 
 REPO_ROOT = Path(__file__).parent
 
@@ -50,11 +53,24 @@ def copy_directory(src: Path, dst: Path, label: str):
     return count
 
 
-def copy_file(src: Path, dst: Path, label: str):
-    """Copy a single file."""
-    dst.parent.mkdir(parents=True, exist_ok=True)
-    shutil.copy2(src, dst)
-    print(f"  [{label}] Copied {src.name} to {dst}")
+def create_symlink(target: Path, link: Path, label: str):
+    """Create a symlink, handling existing links/dirs gracefully."""
+    link.parent.mkdir(parents=True, exist_ok=True)
+
+    if link.is_symlink():
+        existing_target = link.resolve()
+        if existing_target == target.resolve():
+            print(f"  [{label}] Symlink already exists: {link} -> {target}")
+            return
+        print(f"  [{label}] Updating symlink: {link} -> {target} (was -> {existing_target})")
+        link.unlink()
+    elif link.exists():
+        print(f"  [{label}] WARNING: {link} exists and is not a symlink.")
+        print(f"  [{label}] Skipping symlink creation. Manually remove it if you want the symlink.")
+        return
+
+    link.symlink_to(target)
+    print(f"  [{label}] Created symlink: {link} -> {target}")
 
 
 def validate_agents():
@@ -92,17 +108,21 @@ def main():
     print("\n1. Installing agents...")
     copy_directory(REPO_ROOT / "agents", AGENTS_DIR, "agents")
 
-    # 2. Skills (reference docs)
-    print("\n2. Installing skill references...")
+    # 2. Commands
+    print("\n2. Installing commands...")
+    copy_directory(REPO_ROOT / "commands", COMMANDS_DIR, "commands")
+
+    # 3. Skills (reference docs)
+    print("\n3. Installing skill references...")
     copy_directory(REPO_ROOT / "skills", SKILLS_DIR, "skills")
 
-    # 3. Plugin
-    print("\n3. Installing plugin...")
+    # 4. Plugin
+    print("\n4. Installing plugin...")
     copy_directory(REPO_ROOT / "plugin", PLUGINS_DIR, "plugin")
 
-    # 4. Commands (project-local)
-    print(f"\n4. Installing commands to {PROJECT_COMMANDS_DIR}...")
-    copy_directory(REPO_ROOT / "commands", PROJECT_COMMANDS_DIR, "commands")
+    # 5. Symlink ~/.code-puppy/commands → ~/.code_puppy/commands
+    print("\n5. Creating commands symlink...")
+    create_symlink(COMMANDS_DIR, COMMANDS_SYMLINK, "symlink")
 
     # Summary
     banner("Installation complete")
@@ -113,31 +133,32 @@ def main():
 
     print(f"""
   Installed:
-    {agent_count} agents     → {AGENTS_DIR}
-    {skill_count} skills     → {SKILLS_DIR}
-    {command_count} commands   → {PROJECT_COMMANDS_DIR}
-    1 plugin     → {PLUGINS_DIR}
+    {agent_count} agents     -> {AGENTS_DIR}
+    {command_count} commands   -> {COMMANDS_DIR}
+    {skill_count} skills     -> {SKILLS_DIR}
+    1 plugin     -> {PLUGINS_DIR}
+    1 symlink    -> {COMMANDS_SYMLINK} -> {COMMANDS_DIR}
 
   Next steps:
     1. Pin models in Code Puppy:
-       /pin_model mastermind           → claude-opus-4-6
-       /pin_model brainstormer         → claude-opus-4-6
-       /pin_model plan-writer          → claude-sonnet-4-6
-       /pin_model debugger             → claude-sonnet-4-6
-       /pin_model implementer-heavy    → claude-sonnet-4-6
-       /pin_model implementer-light    → claude-haiku-4-5
-       /pin_model spec-reviewer        → claude-sonnet-4-6
-       /pin_model quality-reviewer     → claude-sonnet-4-6
-       /pin_model adversarial-reviewer → claude-opus-4-6
+       /pin_model mastermind           -> claude-opus-4-6
+       /pin_model brainstormer         -> claude-opus-4-6
+       /pin_model plan-writer          -> claude-sonnet-4-6
+       /pin_model debugger             -> claude-sonnet-4-6
+       /pin_model implementer-heavy    -> claude-sonnet-4-6
+       /pin_model implementer-light    -> claude-haiku-4-5
+       /pin_model spec-reviewer        -> claude-sonnet-4-6
+       /pin_model quality-reviewer     -> claude-sonnet-4-6
+       /pin_model adversarial-reviewer -> claude-opus-4-6
 
     2. Start using superpowers:
-       /agent mastermind     — Full orchestrated workflow
-       /brainstorm           — Start designing
-       /write-plan           — Create implementation plan
-       /execute-plan         — Execute plan with sub-agents
-       /debug                — Systematic debugging
-       /review               — Code review
-       /finish-branch        — Complete and clean up
+       /agent mastermind     -- Full orchestrated workflow
+       /brainstorm           -- Start designing
+       /write-plan           -- Create implementation plan
+       /execute-plan         -- Execute plan with sub-agents
+       /debug                -- Systematic debugging
+       /review               -- Code review
+       /finish-branch        -- Complete and clean up
 """)
 
 

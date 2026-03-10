@@ -11,10 +11,10 @@ from .config import SKILL_TRIGGERS, REFERENCE_SKILLS, SKILLS_DIR
 
 def _get_skills_root():
     """Resolve the installed skills directory path."""
-    # Check common install locations
     candidates = [
-        os.path.join(os.path.expanduser("~"), ".code_puppy", "superpowers", SKILLS_DIR),
-        os.path.join(os.getcwd(), ".superpowers", SKILLS_DIR),
+        os.path.join(os.path.expanduser("~"), ".code_puppy", "skills"),
+        os.path.join(os.path.expanduser("~"), ".code-puppy", "skills"),
+        os.path.join(os.getcwd(), ".superpowers", "skills"),
     ]
     for path in candidates:
         if os.path.isdir(path):

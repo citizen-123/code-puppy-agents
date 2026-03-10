@@ -219,14 +219,14 @@ code-puppy-agents/
 │   ├── spec-reviewer.json      # spec compliance (Sonnet)
 │   ├── quality-reviewer.json   # code quality (Sonnet)
 │   └── adversarial-reviewer.json # break everything (Opus)
-├── commands/                 # Slash commands → .claude/commands/
-│   ├── brainstorm.md
+├── commands/                 # Slash commands → ~/.code_puppy/commands/
+│   ├── brainstorm.md        #   + symlink ~/.code-puppy/commands → ~/.code_puppy/commands
 │   ├── write-plan.md
 │   ├── execute-plan.md
 │   ├── debug.md
 │   ├── review.md
 │   └── finish-branch.md
-└── skills/                   # Reference docs → ~/.code_puppy/superpowers/skills/
+└── skills/                   # Reference docs → ~/.code_puppy/skills/
     ├── brainstorming/
     ├── writing-plans/
     ├── test-driven-development/
