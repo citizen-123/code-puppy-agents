@@ -36,8 +36,8 @@ graph TD
     style SR fill:#f59e0b,stroke:#d97706,color:#fff
     style QR fill:#f59e0b,stroke:#d97706,color:#fff
     style AR fill:#ef4444,stroke:#dc2626,color:#fff
-    style impl fill:#f0f4ff,stroke:#93c5fd
-    style rev fill:#fef9ee,stroke:#fcd34d
+    style impl fill:transparent,stroke:#93c5fd
+    style rev fill:transparent,stroke:#fcd34d
 ```
 
 ## Workflow
@@ -75,8 +75,8 @@ flowchart TD
 
     style START fill:#6e44ff,stroke:#4a2db5,color:#fff
     style DELIVER fill:#22c55e,stroke:#16a34a,color:#fff
-    style phase2 fill:#f0f4ff,stroke:#93c5fd
-    style phase3 fill:#fef2f2,stroke:#fca5a5
+    style phase2 fill:transparent,stroke:#93c5fd
+    style phase3 fill:transparent,stroke:#fca5a5
 ```
 
 ## Agents
