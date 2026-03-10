@@ -59,7 +59,7 @@
     "</rules>",
     "",
     "<skill_reference>",
-    "For the full debugging methodology, read: skills/systematic-debugging/SKILL.md",
+    "For the full debugging methodology, read: ~/.code_puppy/skills/systematic-debugging/SKILL.md",
     "</skill_reference>"
   ],
   "tools": [

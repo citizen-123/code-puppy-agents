@@ -115,18 +115,28 @@ flowchart TD
 ## Installation
 
 ```bash
-git clone https://github.com/citizen-123/code-puppy-agents.git
-cd code-puppy-agents
+git clone https://github.com/citizen-123/code-puppy-superpowers.git
+cd code-puppy-superpowers
 python install.py
 ```
 
-The install script copies agents, commands, skills, and the plugin into your Code Puppy environment. Models are pinned inline in each agent's JSON — no manual `/pin_model` needed.
+The install script copies agents, commands, skills, and the plugin into `~/.code_puppy/`. Models are pinned inline in each agent's JSON — no manual `/pin_model` needed.
 
 | Tier | Model | Agents |
 |---|---|---|
 | Heavy | `claude-opus-4-6` | mastermind, brainstormer, adversarial-reviewer |
 | Medium | `claude-sonnet-4-6` | plan-writer, debugger, implementer-heavy, spec-reviewer, quality-reviewer |
 | Light | `claude-haiku-4-5` | implementer-light |
+
+### Uninstall
+
+```bash
+python uninstall.py
+```
+
+### Project Conventions
+
+If your project has an `AGENT.md` or `CLAUDE.md` in its root, the mastermind reads it during Phase 1 and passes the conventions to all sub-agents as global constraints. Style guides, naming conventions, and project-specific rules carry through the entire workflow automatically.
 
 ## Usage
 
@@ -194,8 +204,9 @@ Agents read these via `read_file` when they need the full methodology:
 ## Project Structure
 
 ```
-code-puppy-agents/
+code-puppy-superpowers/
 ├── install.py                # Install script
+├── uninstall.py              # Uninstall script
 ├── plugin/                   # Code Puppy plugin (callbacks)
 │   ├── __init__.py          #   on_startup + before_message hooks
 │   └── config.py            #   trigger patterns and skill registry

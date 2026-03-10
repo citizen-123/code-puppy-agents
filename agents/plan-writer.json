@@ -59,7 +59,7 @@
     "</task_quality_rules>",
     "",
     "<skill_reference>",
-    "For the full plan-writing methodology, read: skills/writing-plans/SKILL.md",
+    "For the full plan-writing methodology, read: ~/.code_puppy/skills/writing-plans/SKILL.md",
     "</skill_reference>"
   ],
   "tools": [

@@ -6,13 +6,17 @@ import os
 import json
 from code_puppy.callbacks import register_callback
 
-from .config import SKILL_TRIGGERS, REFERENCE_SKILLS, SKILLS_DIR
+from .config import SKILL_TRIGGERS, REFERENCE_SKILLS, SKILLS_BASE
+
+
+# How far into the message "weak" patterns must appear to trigger.
+_WEAK_MATCH_WINDOW = 80
 
 
 def _get_skills_root():
     """Resolve the installed skills directory path."""
     candidates = [
-        os.path.join(os.path.expanduser("~"), ".code_puppy", "skills"),
+        os.path.expanduser(SKILLS_BASE),
         os.path.join(os.path.expanduser("~"), ".code-puppy", "skills"),
         os.path.join(os.getcwd(), ".superpowers", "skills"),
     ]
@@ -24,12 +28,32 @@ def _get_skills_root():
 
 def _find_matching_skill(message: str) -> dict | None:
     """Match a user message against skill trigger patterns.
-    Returns the skill config dict if a match is found, None otherwise."""
+
+    Matching rules:
+    - If any "negative" pattern is present anywhere, the skill is skipped.
+    - "strong" patterns match anywhere in the message and are sufficient alone.
+    - "weak" patterns must appear in the first _WEAK_MATCH_WINDOW characters.
+    - First matching skill wins (order in SKILL_TRIGGERS matters).
+    """
     msg_lower = message.lower().strip()
-    for skill_name, skill_config in SKILL_TRIGGERS.items():
-        for pattern in skill_config["patterns"]:
-            if pattern in msg_lower:
-                return {"skill": skill_name, **skill_config}
+    msg_start = msg_lower[:_WEAK_MATCH_WINDOW]
+
+    for skill_name, config in SKILL_TRIGGERS.items():
+        # Check negatives first — any hit disqualifies this skill
+        negatives = config.get("negative", [])
+        if any(neg in msg_lower for neg in negatives):
+            continue
+
+        # Check strong patterns (match anywhere)
+        strong = config.get("strong", [])
+        if any(pat in msg_lower for pat in strong):
+            return {"skill": skill_name, **config}
+
+        # Check weak patterns (must appear near the start)
+        weak = config.get("weak", [])
+        if any(pat in msg_start for pat in weak):
+            return {"skill": skill_name, **config}
+
     return None
 
 
