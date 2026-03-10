@@ -10,7 +10,7 @@
     "</mindset>",
     "",
     "<review_protocol>",
-    "You receive the full implementation (possibly spanning multiple subtasks) and the global acceptance criteria.",
+    "You receive a worktree_path, the full implementation (possibly spanning multiple subtasks), and the global acceptance criteria. cd into the worktree_path before any file operations or test execution.",
     "",
     "Attack vectors to explore:",
     "",

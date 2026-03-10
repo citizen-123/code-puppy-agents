@@ -7,6 +7,7 @@
     "",
     "<review_protocol>",
     "You receive:",
+    "- A worktree_path — cd into it before any file operations",
     "- A subtask specification with acceptance criteria",
     "- The implementer's deliverable",
     "",

@@ -44,13 +44,20 @@ graph TD
 
 ```mermaid
 flowchart TD
-    START(["User provides task"]) --> PLAN
+    START(["User provides task"]) --> WORKTREE
+
+    subgraph phase0 ["Phase 0: Worktree Setup"]
+        WORKTREE["Create git worktree<br/><i>isolated branch + workspace</i>"] --> DEPS["Install deps, verify build"]
+        DEPS --> BASELINE["Run tests — establish baseline"]
+    end
+
+    BASELINE --> PLAN
     PLAN["<b>Phase 1: Decomposition</b><br/>Mastermind produces plan"] --> APPROVE{User approves?}
     APPROVE -- "No" --> PLAN
     APPROVE -- "Yes" --> DISPATCH
 
     subgraph phase2 ["Phase 2: Implementation Loop"]
-        DISPATCH["Dispatch implementer<br/><i>heavy or light</i>"] --> IMPL["Agent implements subtask"]
+        DISPATCH["Dispatch implementer<br/><i>heavy or light</i><br/>with worktree_path"] --> IMPL["Agent implements subtask"]
         IMPL --> SPEC{"spec-reviewer<br/>COMPLIANT?"}
         SPEC -- "No" --> REVISE_SPEC["Implementer fixes<br/>spec gaps"]
         REVISE_SPEC --> SPEC
@@ -68,15 +75,29 @@ flowchart TD
         INTEGRATION["<b>adversarial-reviewer</b><br/>attacks full implementation"] --> PASS{CRITICAL/HIGH<br/>findings?}
         PASS -- "Yes" --> FIX["Route to implementer<br/>for remediation"]
         FIX --> INTEGRATION
-        PASS -- "No" --> DELIVER
+        PASS -- "No" --> FINISH
     end
 
-    DELIVER(["Deliver final output"])
+    subgraph phase4 ["Phase 4: Finish Branch"]
+        FINISH["Verify all tests pass"] --> CHOICE{User chooses}
+        CHOICE -- "Merge" --> MERGE["Merge to main"]
+        CHOICE -- "PR" --> PR["Create pull request"]
+        CHOICE -- "Keep" --> KEEP["Keep branch"]
+        CHOICE -- "Discard" --> DISCARD["Discard branch"]
+    end
+
+    MERGE --> CLEANUP
+    PR --> CLEANUP
+    KEEP --> DONE
+    DISCARD --> CLEANUP
+    CLEANUP["Remove worktree"] --> DONE(["Complete"])
 
     style START fill:#6e44ff,stroke:#4a2db5,color:#fff
-    style DELIVER fill:#22c55e,stroke:#16a34a,color:#fff
+    style DONE fill:#22c55e,stroke:#16a34a,color:#fff
+    style phase0 fill:transparent,stroke:#a78bfa
     style phase2 fill:transparent,stroke:#93c5fd
     style phase3 fill:transparent,stroke:#fca5a5
+    style phase4 fill:transparent,stroke:#86efac
 ```
 
 ## Agents
@@ -132,11 +153,15 @@ The agents reference these skills — install them if you haven't:
 
 ## Workflow
 
+**Phase 0 — Worktree Setup**: Mastermind creates an isolated git worktree on a new branch before any work begins. Installs dependencies, verifies build, runs tests to establish a clean baseline. All subsequent work by every agent happens inside this worktree.
+
 **Phase 1 — Decomposition**: Mastermind analyzes your task, produces an implementation plan with subtasks, agent assignments, dependencies, and execution order. Presents for approval.
 
-**Phase 2 — Implementation**: For each subtask, Mastermind dispatches the assigned implementer, then runs spec-reviewer → quality-reviewer in sequence. Revisions loop up to 3 times before escalating.
+**Phase 2 — Implementation**: For each subtask, Mastermind dispatches the assigned implementer with the worktree path, then runs spec-reviewer → quality-reviewer in sequence. Revisions loop up to 3 times before escalating.
 
 **Phase 3 — Integration Review**: After all subtasks pass, adversarial-reviewer attacks the full implementation. CRITICAL/HIGH findings trigger targeted fixes and re-review.
+
+**Phase 4 — Finish Branch**: Verify all tests pass, then present options: merge to main, create PR, keep branch, or discard. Clean up the worktree after.
 
 ## Agent Selection Heuristic
 
