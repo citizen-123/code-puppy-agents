@@ -120,23 +120,13 @@ cd code-puppy-agents
 python install.py
 ```
 
-The install script copies agents, commands, skills, and the plugin into your Code Puppy environment.
+The install script copies agents, commands, skills, and the plugin into your Code Puppy environment. Models are pinned inline in each agent's JSON — no manual `/pin_model` needed.
 
-### Pin Models
-
-After installing, assign models to each agent:
-
-```
-/pin_model mastermind           → claude-opus-4-6
-/pin_model brainstormer         → claude-opus-4-6
-/pin_model plan-writer          → claude-sonnet-4-6
-/pin_model debugger             → claude-sonnet-4-6
-/pin_model implementer-heavy    → claude-sonnet-4-6
-/pin_model implementer-light    → claude-haiku-4-5
-/pin_model spec-reviewer        → claude-sonnet-4-6
-/pin_model quality-reviewer     → claude-sonnet-4-6
-/pin_model adversarial-reviewer → claude-opus-4-6
-```
+| Tier | Model | Agents |
+|---|---|---|
+| Heavy | `claude-opus-4-6` | mastermind, brainstormer, adversarial-reviewer |
+| Medium | `claude-sonnet-4-6` | plan-writer, debugger, implementer-heavy, spec-reviewer, quality-reviewer |
+| Light | `claude-haiku-4-5` | implementer-light |
 
 ## Usage
 

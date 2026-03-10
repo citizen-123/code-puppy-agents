@@ -139,26 +139,19 @@ def main():
     1 plugin     -> {PLUGINS_DIR}
     1 symlink    -> {COMMANDS_SYMLINK} -> {COMMANDS_DIR}
 
-  Next steps:
-    1. Pin models in Code Puppy:
-       /pin_model mastermind           -> claude-opus-4-6
-       /pin_model brainstormer         -> claude-opus-4-6
-       /pin_model plan-writer          -> claude-sonnet-4-6
-       /pin_model debugger             -> claude-sonnet-4-6
-       /pin_model implementer-heavy    -> claude-sonnet-4-6
-       /pin_model implementer-light    -> claude-haiku-4-5
-       /pin_model spec-reviewer        -> claude-sonnet-4-6
-       /pin_model quality-reviewer     -> claude-sonnet-4-6
-       /pin_model adversarial-reviewer -> claude-opus-4-6
+  Models are pinned inline in each agent's JSON:
+    Opus:   mastermind, brainstormer, adversarial-reviewer
+    Sonnet: plan-writer, debugger, implementer-heavy, spec-reviewer, quality-reviewer
+    Haiku:  implementer-light
 
-    2. Start using superpowers:
-       /agent mastermind     -- Full orchestrated workflow
-       /brainstorm           -- Start designing
-       /write-plan           -- Create implementation plan
-       /execute-plan         -- Execute plan with sub-agents
-       /debug                -- Systematic debugging
-       /review               -- Code review
-       /finish-branch        -- Complete and clean up
+  Start using superpowers:
+    /agent mastermind     -- Full orchestrated workflow
+    /brainstorm           -- Start designing
+    /write-plan           -- Create implementation plan
+    /execute-plan         -- Execute plan with sub-agents
+    /debug                -- Systematic debugging
+    /review               -- Code review
+    /finish-branch        -- Complete and clean up
 """)
 
 

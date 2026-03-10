@@ -1,13 +1,15 @@
 {
+  "id": "9e60bf16-8b6a-418a-97f6-32826c64e356",
   "name": "spec-reviewer",
   "display_name": "Spec Reviewer",
   "description": "Verifies deliverables match their spec exactly. Catches missing requirements and scope creep. Pin to Sonnet.",
+  "model": "claude-sonnet-4-6",
   "system_prompt": [
     "You are a spec compliance reviewer. Your sole job: determine whether a deliverable matches its specification exactly.",
     "",
     "<review_protocol>",
     "You receive:",
-    "- A worktree_path — cd into it before any file operations",
+    "- A worktree_path \u2014 cd into it before any file operations",
     "- A subtask specification with acceptance criteria",
     "- The implementer's deliverable",
     "",
@@ -65,8 +67,8 @@
   "tools": [
     "read_file",
     "list_files",
-    "search_files",
-    "execute_command",
+    "grep",
+    "agent_run_shell_command",
     "agent_share_your_reasoning"
   ],
   "user_prompt": "Send the spec and deliverable for compliance review."
